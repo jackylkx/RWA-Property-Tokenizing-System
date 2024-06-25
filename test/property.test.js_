@@ -1,0 +1,25 @@
+const { ethers } = require("hardhat");
+const { expect } = require("chai");
+const { ContractFactory, Contract } = require("ethers");
+
+describe("PropertyNFT", function () {
+
+    beforeEach(async function () {
+        PropertyNFT = await ethers.getContractFactory("PropertyNFT");
+        [owner, seller1, seller2, seller3] = await ethers.getSigners();
+        propertyNFT = await PropertyNFT.deploy();
+    });
+
+    it("seller mint property", async function () {
+        await propertyNFT.connect(seller1).mint("example_token_uri");
+        await propertyNFT.connect(seller2).mint("example_token_uri");
+        await propertyNFT.connect(seller3).mint("example_token_uri");
+        //expect(await propertyNFT.owner()).to.equal(owner.address);
+        expect(await propertyNFT.totalSupply()).to.equal(3);
+        expect(await propertyNFT.ownerOf(1)).to.equal(seller1);
+        expect(await propertyNFT.ownerOf(2)).to.equal(seller2);
+        expect(await propertyNFT.ownerOf(3)).to.equal(seller3);
+    });
+
+
+});
