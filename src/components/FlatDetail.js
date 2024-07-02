@@ -7,12 +7,13 @@ import Web3 from "web3";
 import escrowContractABI from "../contracts/escrow.json";
 import propertyContractABI from "../contracts/property.json";
 import { Link, useLocation } from 'react-router-dom';
+import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
 
 const FlatDetail = (props) => {
     let stateData = props.location.state
     var account = stateData["account"]
     var properties = stateData['properties']
-
     var sellingPrice = 0;
 
 
@@ -41,6 +42,9 @@ const FlatDetail = (props) => {
     const [escrow, setEscrow] = useState(null);
     const [accounts, setAccounts] = useState(null);
     const [escrowContractOwner, setEscrowContractOwner] = useState(null);
+
+    const [visible, setVisible] = useState(null);
+    const [buttonAction, setButtonAction] = useState(null);
 
     useEffect(() => {
 
@@ -93,23 +97,130 @@ const FlatDetail = (props) => {
 
     }, [escrowContractInstance, propertyContractInstance]);
 
-    const promptConfirmation = () => {
-        setIsModalOpen(true);
+    const renderDialogContent = () => {
+        if (buttonAction === "initial Purchase") {
+            return (
+                <div>
+                    <div className="row">
+                        <div className="col-6">
+                            <p className="mb-0"><b>Property Name</b></p>
+                        </div>
+                        <div className="col-6">
+                            <p className="mb-0">{properties.propertyName}</p>
+                        </div>
+                    </div>                 
+                    <div className="row">
+                        <div className="col-6">
+                            <p className="mb-0"><b>Property Price</b></p>
+                        </div>
+                        <div className="col-6">
+                            <p className="mb-0">{Number(escrow.purchasePrice) / 1000000000000000000} ETH</p>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-6">
+                            <p className="mb-0"><b>Deposit</b></p>
+                        </div>
+                        <div className="col-6">
+                            <p className="mb-0">{Number(escrow.deposit) / 1000000000000000000} ETH</p>
+                        </div>
+                    </div>
+                    <br></br>
+                    <p className="m-0"><i className="fa fa-exclamation-triangle" style={{ color: 'red' }}></i> To reserve the property, contract will hold <b>{Number(escrow.deposit) / 1000000000000000000}</b> ETH from your wallet</p>
+                    <p className="m-0">Once deposit paid, our agent will liaise with you on the follow-up legal procedure.</p>
+                    <br></br>
+                    <button className="btn btn-subscribe" onClick={() => initialPurchase(escrow.propertyid)}>
+                        <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Pay Deposit
+                    </button>
+                </div>
+            );
+        } else if (buttonAction === "Success Initial Purchase") {
+            return (<span>You have reserved the property successfully</span>);
+        }
+        else if (buttonAction === "approve Purchase") {
+            return (
+                <div>
+                    <div className="row">
+                        <div className="col-6">
+                            <p className="mb-0"><b>Property Name</b></p>
+                        </div>
+                        <div className="col-6">
+                            <p className="mb-0">{properties.propertyName}</p>
+                        </div>
+                    </div>                 
+                    <div className="row">
+                        <div className="col-6">
+                            <p className="mb-0"><b>Property Price</b></p>
+                        </div>
+                        <div className="col-6">
+                            <p className="mb-0">{Number(escrow.purchasePrice) / 1000000000000000000} ETH</p>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-6">
+                            <p className="mb-0"><b>Buyer</b></p>
+                        </div>
+                        <div className="col-6">
+                            <p className="mb-0">{escrow.buyer}</p>
+                        </div>
+                    </div>
+                    <br></br>
+                    <p className="m-0"><i className="fa fa-exclamation-triangle" style={{ color: 'red' }}></i> You agree property to be sold to <b>{escrow.buyer}</b></p>
+                    <p className="m-0">Once you approved, buyer will proceed to make remaining payment.</p>
+                    <br></br>
+                    <button className="btn btn-subscribe" onClick={() => approvePurchase(escrow.propertyid)}>
+                        <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Approve
+                    </button>
+                </div>
+            );
+        } else if (buttonAction === "Success Approve Purchase") {
+            return (<span>You have approve the property successfully</span>);
+        } else if (buttonAction === "complete Purchase") {
+            return (
+                <div>
+                    <div className="row">
+                        <div className="col-6">
+                            <p className="mb-0"><b>Property Name</b></p>
+                        </div>
+                        <div className="col-6">
+                            <p className="mb-0">{properties.propertyName}</p>
+                        </div>
+                    </div>                 
+                    <div className="row">
+                        <div className="col-6">
+                            <p className="mb-0"><b>Property Price</b></p>
+                        </div>
+                        <div className="col-6">
+                            <p className="mb-0">{Number(escrow.purchasePrice) / 1000000000000000000} ETH</p>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-6">
+                            <p className="mb-0"><b>Remaining Amount</b></p>
+                        </div>
+                        <div className="col-6">
+                            <p className="mb-0">{(Number(escrow.purchasePrice) - Number(escrow.deposit)) / 1000000000000000000} ETH</p>
+                        </div>
+                    </div>
+                    <br></br>
+                    <p className="m-0"><i className="fa fa-exclamation-triangle" style={{ color: 'red' }}></i> You agree property to be sold to <b>{escrow.buyer}</b></p>
+                    <p className="m-0">Once you approved, buyer will proceed to make remaining payment.</p>
+                    <br></br>
+                    <button className="btn btn-subscribe" onClick={() => completePurchase(escrow.propertyid)}>
+                        <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Make Full Payment
+                    </button>
+                </div>
+            );
+        } else if (buttonAction === "Success Approve Purchase") {
+            return (<span>You have approve the property successfully</span>);
+        }else {
+            return <span></span>;
+        }
     };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleConfirm = (e) => {
-        setIsModalOpen(false);
-        releaseFunding(escrow.propertyid);
-    };
-
 
     const initialPurchase = async (propertyId) => {
         propertyId = Number(propertyId);
-
+        setVisible(false);
         // Call the function received from the parent component
 
         const amountInWei = Number(escrow.purchasePrice) * 0.1; // For example, 0.1 ether
@@ -138,6 +249,9 @@ const FlatDetail = (props) => {
                 gas: gasEstimate
             });
             checkEscrow(propertyId);
+            setVisible(true);
+            setButtonAction("Success Initial Purchase");
+            renderDialogContent();
             console.log('Transaction sent:', tx);
         } catch (error) {
             console.error('Error initiating purchase:', error.data != undefined ? (error.data != undefined ? error.data.message : error.message) : error.message);
@@ -215,7 +329,7 @@ const FlatDetail = (props) => {
 
     const approvePurchase = async (propertyId) => {
         propertyId = Number(propertyId);
-
+        setVisible(false);
         try {
 
             const gasEstimate = await escrowContractInstance.methods.approvePurchase(propertyId).estimateGas({
@@ -227,6 +341,11 @@ const FlatDetail = (props) => {
                 gas: gasEstimate
             });
             checkEscrow(propertyId);
+
+            setVisible(true);
+            setButtonAction("Success Approve Purchase");
+            renderDialogContent();
+
             console.log('Transaction sent:', tx);
         } catch (error) {
             console.error('Error create Escrow', (error.data != undefined ? error.data.message : error.message));
@@ -388,15 +507,11 @@ const FlatDetail = (props) => {
                         show={showErrorDialog}
                         errorMessage={errorMessage}
                     />
-            
-                <ConfirmDialog
-                    isOpen={isModalOpen}
-                    onRequestClose={handleCloseModal}
-                    onConfirm={handleConfirm}
-                    header={header}>
-                        {content}
-                    </ConfirmDialog>
-   
+
+                    <Dialog header={buttonAction ? buttonAction.toUpperCase() : ''} visible={visible} style={{ width: '50vw' }} onHide={() => {if (!visible) return; setVisible(false); }}>
+                        {renderDialogContent()}                       
+                        
+                    </Dialog>
 
                     <div className="page-top">
                         <div className="container">
@@ -443,7 +558,7 @@ const FlatDetail = (props) => {
                                                             );
                                                         } else if (buyer == "0x0000000000000000000000000000000000000000") {
                                                             return (
-                                                                <button className="btn btn-subscribe" onClick={() => initialPurchase(escrow.propertyid)}>
+                                                                <button className="btn btn-subscribe" onClick={() => {setVisible(true); setButtonAction("initial Purchase")}}>
                                                                     <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Purchase Property
                                                                 </button>
                                                             );
@@ -456,7 +571,7 @@ const FlatDetail = (props) => {
                                                             );
                                                         } else if (seller == account) {
                                                             return (
-                                                                <button className="btn btn-subscribe" onClick={() => approvePurchase(escrow.propertyid)}>
+                                                                <button className="btn btn-subscribe" onClick={() => {setVisible(true); setButtonAction("approve Purchase")}}>
                                                                     <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Approve Purchase
                                                                 </button>
                                                             );
@@ -468,7 +583,7 @@ const FlatDetail = (props) => {
                                                     } else if (fundStatus === 2) { //2 = sellerApproved
                                                         if (buyer == account) {
                                                             return (
-                                                                <button className="btn btn-subscribe" onClick={() => completePurchase(escrow.propertyid)}>
+                                                                <button className="btn btn-subscribe" onClick={() => {setVisible(true); setButtonAction("complete Purchase")}}>
                                                                     <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Complete Purchase
                                                                 </button>
                                                             );
