@@ -21,6 +21,24 @@ module.exports = {
         }
     },
 
+    async getPropertiesByStatus(req, res) {
+        try {
+            const Properties = await Properties.find({ fundStatus : req.param.fundStatus });
+            res.status(200).json(Properties);
+        } catch (error) {
+            res.status(404).json({ message: 'Properties not found' });
+        }
+    },
+
+    async getPropertiesByStatusSeller(req, res) {
+        try {
+            const Properties = await Properties.find({ fundStatus : req.param.fundStatus, seller: req.param.seller });
+            res.status(200).json(Properties);
+        } catch (error) {
+            res.status(404).json({ message: 'Properties not found' });
+        }
+    },
+
     async updateProperties(req, res) {
         try {
             const Properties = await Properties.findByIdAndUpdate(req.params.id, req.body, { new: true });

@@ -2,26 +2,39 @@
 
 const mongoose = require('mongoose');
 
-const PropertiesSchema = new mongoose.Schema({
-    id: {
-        type: String,
-        required: true
-    },
-    name: {
-        type: String,
-        required: true
-    },
-    address: {
-        type: String,
+const propertiesSchema = new mongoose.Schema({
+    propertyid: {
+        type: Number,
         required: true,
         unique: true
     },
-    description: {
+    seller: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
-
+    buyer: {
+        type: String,
+        required: true
+    },
+    approval: {
+        type: Boolean,
+        required: true
+    },
+    isListed: {
+        type: Boolean,
+        required: true
+    },
+    purchasePrice: {
+        type: Number,
+        required: true
+    },
+    deposit: {
+        type: Number,
+        required: true
+    },
+    fundStatus: {
+        type: Number,
+        required: true
+    }
 });
-
-module.exports = mongoose.model('Properties', PropertiesSchema);
+module.exports = mongoose.model('Properties', propertiesSchema);
