@@ -5,8 +5,9 @@ const PropertiesController = require('../controllers/propertiesController');
 // Routes
 router.post('/', PropertiesController.createProperties);
 router.get('/:id', PropertiesController.getPropertiesById);
-router.get('/status/:status', PropertiesController.getPropertiesByStatus);
-router.get('/status/:status/seller/:seller', PropertiesController.getPropertiesByStatusSeller);
+router.get('/fundstatus/:fundstatus', PropertiesController.getPropertiesByStatus);
+router.get('/', PropertiesController.getPropertiesByListing);
+router.get('/fundstatus/:fundstatus/seller/:seller', PropertiesController.getPropertiesByStatusSeller);
 router.put('/:id', PropertiesController.updateProperties);
 router.delete('/:id', PropertiesController.deleteProperties);
 

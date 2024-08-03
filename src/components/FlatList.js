@@ -2,11 +2,12 @@
 import Title from "./Title"
 import FlatItem from "./FlatItem"
 import { useEffect, useState } from "react";
+import { getAllProperty, getAllPropertyByListing, addProperty } from '../api/property_api';
 
 const FlatList = ({propertyContract, account}) => {
     const title = {
-        text: "Property in Silicon Valley",
-        description: "Property in Silicon Valley"
+        text: "Residential Properties",
+        description: "Housing Listing"
     }
 
     const [isLoading, setIsLoading] = useState(false);
@@ -14,17 +15,40 @@ const FlatList = ({propertyContract, account}) => {
     const [propertiesHash, setPropertiesHash] = useState([]);
 
     useEffect(() => {
-        if(propertyContract != undefined){
+/*         if(propertyContract != undefined){
             if(properties.length == 0)
                 {
                     getAllProperty (propertyContract);
                 }
             
-        }
-        
+        } */
+
+                const fetchProperties = async () => {
+                    try {
+                        const data = await getAllPropertyByListing();
+                        setProperties(data);
+                    } catch (err) {
+                        //setError(err);
+                        console.error('Error:', err);
+                    }
+                };
+       if(properties.length == 0){
+
+
+        fetchProperties();
+       }
+                
       }, [properties]);
 
-
+      async function getPropertiesByLiting() {
+        try {
+            const response = await fetch(`/api/properties/`);
+            const result = await response.json();
+            console.log(result);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
       
       async function getAllProperty (propertyContract) {
         

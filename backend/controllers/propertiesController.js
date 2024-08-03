@@ -5,8 +5,8 @@ const Properties = require('../models/Properties');
 module.exports = {
     async createProperties(req, res) {
         try {
-            const Properties = await Properties.create(req.body);
-            res.status(201).json(Properties);
+            const properties = await Properties.create(req.body);
+            res.status(201).json(properties);
         } catch (error) {
             res.status(400).json({ message: error.message });
         }
@@ -14,8 +14,12 @@ module.exports = {
 
     async getPropertiesById(req, res) {
         try {
-            const Properties = await Properties.findById(req.params.id);
-            res.status(200).json(Properties);
+            
+            const properties = await Properties.find({propertyid : req.params.id});
+            if (properties.length === 0) {
+                return res.status(404).json({ message: 'No listed properties found' });
+            }
+            res.status(200).json(properties);
         } catch (error) {
             res.status(404).json({ message: 'Properties not found' });
         }
@@ -23,8 +27,9 @@ module.exports = {
 
     async getPropertiesByStatus(req, res) {
         try {
-            const Properties = await Properties.find({ fundStatus : req.param.fundStatus });
-            res.status(200).json(Properties);
+            
+            const properties = await Properties.find({ fundstatus : req.param.fundStatus });            
+            res.status(200).json(properties);
         } catch (error) {
             res.status(404).json({ message: 'Properties not found' });
         }
@@ -32,17 +37,30 @@ module.exports = {
 
     async getPropertiesByStatusSeller(req, res) {
         try {
-            const Properties = await Properties.find({ fundStatus : req.param.fundStatus, seller: req.param.seller });
-            res.status(200).json(Properties);
+            const properties = await Properties.find({ fundstatus : req.param.fundStatus, seller: req.param.seller });
+            res.status(200).json(properties);
         } catch (error) {
             res.status(404).json({ message: 'Properties not found' });
         }
     },
 
+    async getPropertiesByListing(req, res) {
+        try {
+            const properties = await Properties.find({ isListed : true });
+            if (properties.length === 0) {
+                return res.status(404).json({ message: 'No listed properties found' });
+            }
+            res.status(200).json(properties);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: error });
+        }
+    },
+
     async updateProperties(req, res) {
         try {
-            const Properties = await Properties.findByIdAndUpdate(req.params.id, req.body, { new: true });
-            res.status(200).json(Properties);
+            const properties = await Properties.findByIdAndUpdate(req.params.id, req.body, { new: true });
+            res.status(200).json(properties);
         } catch (error) {
             res.status(404).json({ message: 'Properties not found' });
         }
@@ -50,7 +68,7 @@ module.exports = {
 
     async deleteProperties(req, res) {
         try {
-            await Properties.findByIdAndDelete(req.params.id);
+            await properties.findByIdAndDelete(req.params.id);
             res.status(204).send();
         } catch (error) {
             res.status(404).json({ message: 'Properties not found' });

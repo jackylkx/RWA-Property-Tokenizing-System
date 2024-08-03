@@ -13,7 +13,7 @@ const FlatItem = ({slug, properties, account}) => {
                 <div className="item-description">
                     <div className="d-flex justify-content-between mb-3">
                         <span className="item-title">{properties.propertyName}</span>
-                        <span className="item-price"><i class='fab fa-ethereum' style={{ fontSize: '24px' }}></i>{properties.sellingPrice}</span>
+                        <span className="item-price"><i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i>{properties.sellingPrice}</span>
                     </div>
                     <div style={{ minHeight: '60px', textAlign: 'left' }}>
                         <span >{properties.propertyDesc}</span>

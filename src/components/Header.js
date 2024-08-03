@@ -3,6 +3,8 @@ import Web3 from "web3";
 import Connect from "./Connect";
 import { useEffect, useState } from "react";
 import {Link} from "react-router-dom"
+import logo from "../logo.jpg"
+import banner from "../banner.jpg"
 
 const Header = ({
     web3,
@@ -24,9 +26,10 @@ const Header = ({
                     <div className="container-fluid">
                         <Link className="navbar-brand" to="/">
                             <div className="d-flex align-items-center">
+                                
                             <i className="fas fa-home"></i>
                                 <span className="ms-2">
-                                    MB
+                                    
                            </span>
                             </div>
                         </Link>
@@ -38,9 +41,9 @@ const Header = ({
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/">Home</Link>
                                 </li>
-                                <li className="nav-item">
+                                {/* <li className="nav-item">
                                     <Link  className="nav-link" to="/blog">Blog</Link>
-                                </li>
+                                </li> */}
                                 <li className="nav-item">
                                     <Link  className="nav-link" to="/listing">List Your Property</Link>
                                 </li>
@@ -54,14 +57,14 @@ const Header = ({
                                         </li>
                                     ) :("")
                                 }
-                                <li className="nav-item">
+                                {/* <li className="nav-item">
                                     <Link className="nav-link" to="#">Category <i className="fas fa-chevron-down"></i></Link>
                                     <ul className="sub-ul">
                                         <li><Link to="#">item</Link></li>
                                         <li><Link to="#">item</Link></li>
                                         <li><Link to="#">item</Link></li>
                                     </ul>
-                                </li>
+                                </li> */}
                                 <li className="nav-item">
                                 <Connect
                                     web3={web3}

@@ -6,8 +6,8 @@ import BestFlatItem from "./BestFlatItem"
 export default class BestFlatList extends Component {
     render() {
         const title = {
-            text: "Lorem Ipsum",
-            description: "Lorem ipsum dolor sit ame"
+            text: "Agricultural And Commercial Land",
+            description: "Land Listing"
         }
         const settings = {
             infinite: true,
@@ -44,10 +44,10 @@ export default class BestFlatList extends Component {
                         <div className="col-lg-12">
                             <Title title={title.text} description={title.description} />
                             <Slider {...settings}>
-                                <BestFlatItem flatState="For Rent"  />
-                                <BestFlatItem flatState="For Sale"  />
-                                <BestFlatItem flatState="For Rent"  />
-                                <BestFlatItem flatState="For Rent"  />
+                                <BestFlatItem flatState="For Rent" image="agriculture land 1.jpg" title="Firewood Land" desc="Agriculture Lane" landsize="10,000 sqft" />
+                                <BestFlatItem flatState="For Sale" image="agriculture land 2.jpg" title="Starcity Land" desc="Agriculture Lane" landsize="10,000 sqft"/>
+                                <BestFlatItem flatState="For Rent" image="agriculture land 3.jpg" title="Stard Land" desc="Agriculture Lane" landsize="10,000 sqft"/>
+                                <BestFlatItem flatState="For Rent" image="agriculture land 4.jpg" title="Diamond Ring Land" desc="Agriculture Lane" landsize="10,000 sqft"/>
                                 <BestFlatItem flatState="For Sale"  />
                                 <BestFlatItem flatState="For Rent"  />
                             </Slider>

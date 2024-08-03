@@ -12,9 +12,9 @@ const Home=({ propertyContract, account})=>{
             <Banner/>
             <FlatList propertyContract={propertyContract} account={account}/>
             <BestFlatList/>
-            <Subscribe/>
+            {/* <Subscribe/>
             <TeamList/>
-            <References/>
+            <References/> */}
         </React.Fragment>
     )
 }
