@@ -31,7 +31,7 @@ const escrowContractAddress = process.env.REACT_APP_ESCROW_CONTRACT_ADDRESS;
 function App() {
 
 
-  const [account, setAccount] = useState(null);
+  const [account, setAccount] = useState(localStorage.getItem('account'));
   const [profileExists, setProfileExists] = useState(null);
   const [web3, setWeb3] = useState(null);
   const [escrowContract, setEscrowContract] = useState(null);
@@ -98,7 +98,9 @@ function App() {
         </Route>
         <Route path="/contact"  component={Contact}></Route>
         <Route path="/listing"  component={Listing}></Route>
-        <Route path="/mypropertieslisting"  component={MyPropertiesListing}></Route>
+        <Route path="/mypropertieslisting" exact>
+          <MyPropertiesListing  account={account} />
+        </Route>        
         <Route path="/fundreleaselist"  component={FundReleaseList}></Route>
         <Route path="/blog" exact component={Blog}></Route>
         <Route path="/blog/:id"  component={BlogDetail}></Route>

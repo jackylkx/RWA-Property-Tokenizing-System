@@ -23,12 +23,33 @@ export const getAllPropertyByListing = async () => {
   }
 };
 
+export const getPropertiesBySeller = async (seller) => {
+  try {
+    const response = await axios.get(`${API_URL}/seller/${seller}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching data', error);
+    throw error;
+  }
+};
+
 export const getAllPropertyById = async (propertyId) => {
   try {
     const response = await axios.get(`${API_URL}/${propertyId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching data', error);
+    throw error;
+  }
+};
+
+export const listProperty = async (propertyId,purchasePrice,deposit) => {
+  try {
+    const response = await axios.post(`${API_URL}/${propertyId}`, 
+      `{isListed: true, purchasePrice: ${purchasePrice}, deposit: ${deposit}}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating item', error);
     throw error;
   }
 };

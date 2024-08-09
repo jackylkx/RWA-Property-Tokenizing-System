@@ -75,7 +75,7 @@ const Connect = ({
     }
 
  }
-  async function connectWallet() {
+  async function ConnectWallet() {
     if (window.ethereum) {
       try {
         await window.ethereum.enable();
@@ -130,6 +130,56 @@ const Connect = ({
       console.error("No web3 provider detected");
     }
   }
+  useEffect(() => {
+        
+    console.log("account initial: ", account);
+    
+}, []);
+  useEffect(() => {
+        
+    window.ethereum.on('accountsChanged', async () => {
+
+      const tempWeb3 = new Web3(window.ethereum);
+      var accounts = await tempWeb3.eth.getAccounts();          
+       if (accounts.length > 0) {                
+          setAccount(accounts[0]);   
+          localStorage.setItem('account', accounts[0]);  
+        } 
+    })
+
+    if(account != null){
+        console.log("account updated: ", account);
+    }
+    
+}, [account]);
+
+  async function fnConnectWallet() {
+    if (window.ethereum) {
+      try {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const networkId = await window.ethereum.request({ method: 'net_version' });
+
+        //if (networkId !== "100") {
+        // Network ID for Sepolia
+        //await switchToSepolia();
+        //}
+
+        // user enables the app to connect to MetaMask
+
+        const tempWeb3 = new Web3(window.ethereum);
+       
+        var accounts = await tempWeb3.eth.getAccounts();          
+        setAccount(accounts[0]); 
+        localStorage.setItem('account', accounts[0]);
+
+        
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      console.error("No web3 provider detected");
+    }
+  }
 
   const handleClick = () => {
     // Call the function received from the parent component
@@ -139,7 +189,7 @@ const Connect = ({
   return (
     <>
       <div className="connect">
-        {!account && !profileData ? (
+        {account == null ? (
           <button  className="btn btn-connect" id="connectWalletBtn" onClick={handleClick}>
             Connect Wallet
           </button>
@@ -147,7 +197,7 @@ const Connect = ({
             <div>
               <div>
                  {/*  <div id="userName">ProfileName: {profileData.displayName}</div> */}
-                  <div id="userAddress">Connected: {shortAddress(account)}</div>
+                  <div id="userAddress" style={{fontSize: "14px", padding: "8px"}}>Connected: {shortAddress(account)}</div>
                 </div>
             </div>
           )}

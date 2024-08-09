@@ -9,37 +9,26 @@ import propertyContractABI from "../contracts/property.json";
 import { Link, useLocation } from 'react-router-dom';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
+import { getAllPropertyById, getAllPropertyByListing, addProperty } from '../api/property_api';
 
 const FlatDetail = (props) => {
     let stateData = props.location.state
-    var account = stateData["account"]
-    var properties = stateData['properties']
+    //var account = localStorage.getItem('account')
+    var propertyId = stateData['propertyId'];
     var sellingPrice = 0;
 
 
     const escrowContractAddress = process.env.REACT_APP_ESCROW_CONTRACT_ADDRESS;
     const propertyContractAddress = process.env.REACT_APP_PROPERTY_CONTRACT_ADDRESS;
-    const images = [
-        {
-            original: "https://ipfs.io/ipfs/" + properties.imageUrls[0],
-            thumbnail: "https://ipfs.io/ipfs/" + properties.imageUrls[0],
-        },
-        {
-            original: "https://ipfs.io/ipfs/" + properties.imageUrls[1],
-            thumbnail: "https://ipfs.io/ipfs/" + properties.imageUrls[1],
-        },
-        {
-            original: "https://ipfs.io/ipfs/" + properties.imageUrls[2],
-            thumbnail: "https://ipfs.io/ipfs/" + properties.imageUrls[2],
-        },
-    ];
 
+    const [images, setImages] = useState(null);
     const [escrowContractInstance, setEscrowContractInstance] = useState(null);
     const [propertyContractInstance, setPropertyContractInstance] = useState(null);
 
     const [showErrorDialog, setShowErrorDialog] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [escrow, setEscrow] = useState(null);
+    const [properties, setProperties] = useState(null);
     const [accounts, setAccounts] = useState(null);
     const [escrowContractOwner, setEscrowContractOwner] = useState(null);
 
@@ -47,7 +36,23 @@ const FlatDetail = (props) => {
     const [buttonAction, setButtonAction] = useState(null);
 
     useEffect(() => {
-
+        const fetchProperties = async (propertyId) => {
+            try {
+                console.log(propertyId); 
+                const data = await getAllPropertyById(propertyId);
+                if (data.length > 0) {
+                    setProperties(data[0]);
+                }
+                setEscrow(data[0]);
+            } catch (err) {
+                console.error('Error:', err);
+            }
+        };
+        console.log("accounts: ", accounts);
+        
+        if (properties == null && escrow == null) {
+            fetchProperties(1);
+        }
         const tempWeb3 = new Web3(window.ethereum);
         if (!escrowContractInstance ) {           
 
@@ -57,45 +62,107 @@ const FlatDetail = (props) => {
             ));
         }
         else if(!propertyContractInstance)
-            {
-                setPropertyContractInstance(new tempWeb3.eth.Contract(
-                    propertyContractABI,
-                    propertyContractAddress,
-                ));
-            }
-        else {
-            if (escrow == undefined) {
-                checkEscrow(Number(properties.propertyid));
-            }
+        {
+            setPropertyContractInstance(new tempWeb3.eth.Contract(
+                propertyContractABI,
+                propertyContractAddress,
+            ));
+        }
 
+        window.ethereum.on('accountsChanged', async () => {
+      
+            window.ethereum.on('accountsChanged', handleAccountChange);
+            const account = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            setAccounts(account[0]);
+            console.log('Accounts:', account[0]);
+        })
+        
+        setAccounts(localStorage.getItem('account'));
+        
+        return () => {
+            setProperties({}); // This worked for me
+          };
 
-            async function getEscrowContractOwner() {
-                const escrowContractOwner = await escrowContractInstance.methods.contractOwner().call();
-                console.log('escrowContractOwner:', escrowContractOwner);
-                setEscrowContractOwner(escrowContractOwner);
-            }
+    }, []);
 
+    useEffect(() => {
+        
+        if(properties != null){
+            setImages([
+                {
+                    original: "https://ipfs.io/ipfs/" + properties.imageUrls[0],
+                    thumbnail: "https://ipfs.io/ipfs/" + properties.imageUrls[0],
+                },
+                {
+                    original: "https://ipfs.io/ipfs/" + properties.imageUrls[1],
+                    thumbnail: "https://ipfs.io/ipfs/" + properties.imageUrls[1],
+                },
+                {
+                    original: "https://ipfs.io/ipfs/" + properties.imageUrls[2],
+                    thumbnail: "https://ipfs.io/ipfs/" + properties.imageUrls[2],
+                },
+            ]);
+        }
+        
+    }, [properties]);
+
+    useEffect(() => {
+        async function getEscrowContractOwner() {
+            
+            const escrowContractOwner = await escrowContractInstance.methods.contractOwner().call();
+            
+            setEscrowContractOwner(escrowContractOwner);
+        }
+
+        if(escrowContractInstance != null){
             getEscrowContractOwner();
+        }
 
-            async function requestAccounts() {
-                try {
-                    window.ethereum.on('accountsChanged', handleAccountChange);
+        return () => {
+            setEscrowContractOwner({}); // This worked for me
+          };
+        
+    }, [escrowContractInstance]);
+
+    useEffect(() => {
+        // Logic to reload or perform any actions when account changes
+        console.log('Account changed or component reloaded:', accounts);
+        // You can put any logic here that needs to run when account changes
+      }, [accounts]);
+
+    const fnConnectWallet = async () => {
+        if (window.ethereum) {
+            try {
+              await window.ethereum.request({ method: 'eth_requestAccounts' });
+              const networkId = await window.ethereum.request({ method: 'net_version' });
+      
+              //if (networkId !== "100") {
+              // Network ID for Sepolia
+              //await switchToSepolia();
+              //}
+      
+              // user enables the app to connect to MetaMask
+      
+              const tempWeb3 = new Web3(window.ethereum);
+              
+              var accounts = await tempWeb3.eth.getAccounts();          
+      
+      
+              window.ethereum.on('accountsChanged', async () => {
+      
+                    //window.ethereum.on('accountsChanged', handleAccountChange);
                     const account = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     setAccounts(account[0]);
                     console.log('Accounts:', account[0]);
-
-
-                } catch (error) {
-                    console.error('Error requesting accounts:', error);
-                }
+                })
+            } catch (error) {
+              console.error(error);
             }
+          } else {
+            console.error("No web3 provider detected");
+          }
 
-            if (accounts == undefined || accounts == null) {
-                requestAccounts();
-            }
-        }
-
-    }, [escrowContractInstance, propertyContractInstance]);
+    }
 
     const renderDialogContent = () => {
         if (buttonAction === "initial Purchase") {
@@ -114,7 +181,7 @@ const FlatDetail = (props) => {
                             <p className="mb-0"><b>Property Price</b></p>
                         </div>
                         <div className="col-6">
-                            <p className="mb-0">{Number(escrow.purchasePrice) / 1000000000000000000} ETH</p>
+                            <p className="mb-0">{Number(properties.purchasePrice) / 1000000000000000000} ETH</p>
                         </div>
                     </div>
                     <div className="row">
@@ -122,14 +189,14 @@ const FlatDetail = (props) => {
                             <p className="mb-0"><b>Deposit</b></p>
                         </div>
                         <div className="col-6">
-                            <p className="mb-0">{Number(escrow.deposit) / 1000000000000000000} ETH</p>
+                            <p className="mb-0">{Number(properties.deposit) / 1000000000000000000} ETH</p>
                         </div>
                     </div>
                     <br></br>
-                    <p className="m-0"><i className="fa fa-exclamation-triangle" style={{ color: 'red' }}></i> To reserve the property, contract will hold <b>{Number(escrow.deposit) / 1000000000000000000}</b> ETH from your wallet</p>
+                    <p className="m-0"><i className="fa fa-exclamation-triangle" style={{ color: 'red' }}></i> To reserve the property, contract will hold <b>{Number(properties.deposit) / 1000000000000000000}</b> ETH from your wallet</p>
                     <p className="m-0">Once deposit paid, our agent will liaise with you on the follow-up legal procedure.</p>
                     <br></br>
-                    <button className="btn btn-subscribe" onClick={() => initialPurchase(escrow.propertyid)}>
+                    <button className="btn btn-subscribe" onClick={() => initialPurchase(properties.propertyid)}>
                         <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Pay Deposit
                     </button>
                 </div>
@@ -153,7 +220,7 @@ const FlatDetail = (props) => {
                             <p className="mb-0"><b>Property Price</b></p>
                         </div>
                         <div className="col-6">
-                            <p className="mb-0">{Number(escrow.purchasePrice) / 1000000000000000000} ETH</p>
+                            <p className="mb-0">{Number(properties.purchasePrice) / 1000000000000000000} ETH</p>
                         </div>
                     </div>
                     <div className="row">
@@ -161,14 +228,14 @@ const FlatDetail = (props) => {
                             <p className="mb-0"><b>Buyer</b></p>
                         </div>
                         <div className="col-6">
-                            <p className="mb-0">{escrow.buyer}</p>
+                            <p className="mb-0">{properties.buyer}</p>
                         </div>
                     </div>
                     <br></br>
-                    <p className="m-0"><i className="fa fa-exclamation-triangle" style={{ color: 'red' }}></i> You agree property to be sold to <b>{escrow.buyer}</b></p>
+                    <p className="m-0"><i className="fa fa-exclamation-triangle" style={{ color: 'red' }}></i> You agree property to be sold to <b>{properties.buyer}</b></p>
                     <p className="m-0">Once you approved, buyer will proceed to make remaining payment.</p>
                     <br></br>
-                    <button className="btn btn-subscribe" onClick={() => approvePurchase(escrow.propertyid)}>
+                    <button className="btn btn-subscribe" onClick={() => approvePurchase(properties.propertyid)}>
                         <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Approve
                     </button>
                 </div>
@@ -191,7 +258,7 @@ const FlatDetail = (props) => {
                             <p className="mb-0"><b>Property Price</b></p>
                         </div>
                         <div className="col-6">
-                            <p className="mb-0">{Number(escrow.purchasePrice) / 1000000000000000000} ETH</p>
+                            <p className="mb-0">{Number(properties.purchasePrice) / 1000000000000000000} ETH</p>
                         </div>
                     </div>
                     <div className="row">
@@ -199,14 +266,14 @@ const FlatDetail = (props) => {
                             <p className="mb-0"><b>Remaining Amount</b></p>
                         </div>
                         <div className="col-6">
-                            <p className="mb-0">{(Number(escrow.purchasePrice) - Number(escrow.deposit)) / 1000000000000000000} ETH</p>
+                            <p className="mb-0">{(Number(properties.purchasePrice) - Number(properties.deposit)) / 1000000000000000000} ETH</p>
                         </div>
                     </div>
                     <br></br>
-                    <p className="m-0"><i className="fa fa-exclamation-triangle" style={{ color: 'red' }}></i> You agree property to be sold to <b>{escrow.buyer}</b></p>
+                    <p className="m-0"><i className="fa fa-exclamation-triangle" style={{ color: 'red' }}></i> You agree property to be sold to <b>{properties.buyer}</b></p>
                     <p className="m-0">Once you approved, buyer will proceed to make remaining payment.</p>
                     <br></br>
-                    <button className="btn btn-subscribe" onClick={() => completePurchase(escrow.propertyid)}>
+                    <button className="btn btn-subscribe" onClick={() => completePurchase(properties.propertyid)}>
                         <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Make Full Payment
                     </button>
                 </div>
@@ -219,11 +286,12 @@ const FlatDetail = (props) => {
     };
 
     const initialPurchase = async (propertyId) => {
+        fnConnectWallet();
         propertyId = Number(propertyId);
         setVisible(false);
         // Call the function received from the parent component
 
-        const amountInWei = Number(escrow.purchasePrice) * 0.1; // For example, 0.1 ether
+        const amountInWei = Number(properties.purchasePrice) * 0.1; // For example, 0.1 ether
         //const amountInWei = ethers.parseEther(amountInEther.toString());
         try {
             /*             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -265,6 +333,7 @@ const FlatDetail = (props) => {
     };
 
     const createEscrow = async (id, price) => {
+        fnConnectWallet();
         const tempWeb3 = new Web3(window.ethereum);
 
         propertyContractInstance = new tempWeb3.eth.Contract(
@@ -361,7 +430,7 @@ const FlatDetail = (props) => {
     const completePurchase = async (propertyId) => {
         propertyId = Number(propertyId);
 
-        const amountInWei = Number(escrow.purchasePrice) * 0.9; // For example, 0.1 ether
+        const amountInWei = Number(properties.purchasePrice) * 0.9; // For example, 0.1 ether
         //const amountInWei = ethers.parseEther(amountInEther);
         try {
 
@@ -496,12 +565,15 @@ const FlatDetail = (props) => {
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         setAccounts(accounts[0]);
         console.log("Current account:", accounts[0]);
-        checkEscrow(properties.propertyid);
+        //checkEscrow(propertyId);
     };
 
     return (
         <div>
-            {(escrow !== undefined && escrow != null) && (accounts != null) && (escrowContractOwner != "") ? (
+            {
+            
+            (properties != null) && (escrowContractInstance != null) && (escrowContractOwner != null) 
+            && (images != null)  ? (
                 <div className="flat-detail">
                     <ErrorDialog
                         show={showErrorDialog}
@@ -533,7 +605,7 @@ const FlatDetail = (props) => {
                                             {properties.propertyDesc}</p>
                                     </div>
                                     <div>
-                                        <span className="fd-price"><i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> {Number(escrow.purchasePrice) / 1000000000000000000}</span>
+                                        <span className="fd-price"><i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> {Number(properties.purchasePrice) / 1000000000000000000}</span>
                                     </div>
                                 </div>
                                 <ImageGallery flickThreshold={0.50} slideDuration={0} items={images} showNav={false} showFullscreenButton={false} showPlayButton={false} />
@@ -544,19 +616,20 @@ const FlatDetail = (props) => {
                                             <p>Discover the grandeur of a luxurious mansion nestled in the heart of {properties.propertyName}, where sophistication meets tranquility. This sprawling estate boasts exquisite architectural design, lavish interiors, and lush landscaped gardens, creating an idyllic retreat amidst the vibrant cityscape. With spacious living areas, opulent amenities, and panoramic views, this mansion offers the epitome of upscale living in {properties.propertyName}.</p>
                                             {
                                                 (() => {
-                                                    const seller = escrow.seller.toLowerCase();
-                                                    const buyer = escrow.buyer.toLowerCase();
-                                                    const account = accounts.toLowerCase();
-                                                    const _escrowContractOwner = escrowContractOwner.toLowerCase();
-                                                    const fundStatus = Number(escrow.fundStatus);
+                                                    const seller = properties.seller.toLowerCase();
+                                                    const buyer = properties.buyer.toLowerCase();
+                                                    const account = accounts != null ? accounts.toLowerCase() : "";
+                                                    //const _escrowContractOwner = escrowContractOwner != null ? escrowContractOwner.toLowerCase() : "";
+                                                    const fundStatus = Number(properties.fundStatus);
 
+                                                    
                                                     //0 = initial, 1 = deposit paid, 2 = sellerApproved, 3= full payment, 4 = fund release, 5 = listing cancelled
                                                     if (fundStatus === 0) {
                                                         if (seller == account) {
                                                             return (
                                                                 <span>You have listed your property</span>
                                                             );
-                                                        } else if (buyer == "0x0000000000000000000000000000000000000000") {
+                                                        } else if (buyer == "0x0000000000000000000000000000000000000000" || buyer == "") {
                                                             return (
                                                                 <button className="btn btn-subscribe" onClick={() => {setVisible(true); setButtonAction("initial Purchase")}}>
                                                                     <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Purchase Property
@@ -666,7 +739,8 @@ const FlatDetail = (props) => {
                         </div>
                     </div>
                 </div>
-            ) : (<div>Loading escrow...</div>)}
+            ) : (<div>Loading escrow...</div>)
+            }
 
         </div>
     )

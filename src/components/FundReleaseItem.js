@@ -90,8 +90,8 @@ const FundReleaseItem = ({ slug, properties, escrow }) => {
                     header="Fund Release"
                 >
                     <p>Fund Release to Seller: <b>{releaseToSeller} ETH</b></p>
-                <p>Commission to Contract Owner: <b>{commission} ETH</b></p>
-                <p>Property NFT will be transferred from Contract to: <b>{escrow.buyer}</b></p>
+                <p>Property Gain Tax pay to government: <b>{commission} ETH</b></p>
+                <p>Property Ownership will be transferred from Contract to: <b>{escrow.buyer}</b></p>
                     </ConfirmDialog>
             </div>
             {(properties !== undefined && properties != null) ? (

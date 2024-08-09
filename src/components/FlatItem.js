@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from "react-router-dom";
 
 const FlatItem = ({slug, properties, account}) => {
-
+    const PRECISION = 1000000000000000000;
     return (
         <div className="text-center col-lg-4 col-12 col-md-6 ">
             { properties !== undefined && properties != null?  (
@@ -13,7 +13,7 @@ const FlatItem = ({slug, properties, account}) => {
                 <div className="item-description">
                     <div className="d-flex justify-content-between mb-3">
                         <span className="item-title">{properties.propertyName}</span>
-                        <span className="item-price"><i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i>{properties.sellingPrice}</span>
+                        <span className="item-price"><i className='fab fa-ethereum' style={{ fontSize: '24px', marginRight: '10px'}}></i>{Number(properties.purchasePrice / PRECISION)}</span>
                     </div>
                     <div style={{ minHeight: '60px', textAlign: 'left' }}>
                         <span >{properties.propertyDesc}</span>
@@ -27,7 +27,7 @@ const FlatItem = ({slug, properties, account}) => {
                         </div>
                         <Link to={{
                                 pathname: `/flat/${slug}`,
-                                state: { properties: properties}
+                                state: { properties: properties, account: account}
                             }} 
                             className="item-title" >
                             <button className="btn btn-detail">View</button>

@@ -27,7 +27,7 @@ const Header = ({
                         <Link className="navbar-brand" to="/">
                             <div className="d-flex align-items-center">
                                 
-                            <i className="fas fa-home"></i>
+                            <i className="fas fa-home" style={{color:'#ffffff'}}></i>
                                 <span className="ms-2">
                                     
                            </span>
@@ -47,9 +47,13 @@ const Header = ({
                                 <li className="nav-item">
                                     <Link  className="nav-link" to="/listing">List Your Property</Link>
                                 </li>
-                                <li className="nav-item">
-                                    <Link  className="nav-link" to="/mypropertiesListing">List my Property</Link>
-                                </li>
+                                {
+                                    account  ? (
+                                        <li className="nav-item">
+                                            <Link  className="nav-link" to="/mypropertiesListing">My Property</Link>
+                                        </li>
+                                    ) :("")
+                                }
                                 {
                                     account  ? (
                                         <li className="nav-item">

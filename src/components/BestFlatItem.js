@@ -14,7 +14,7 @@ const BestFlatItem = ({flatState, image, title, desc, landsize}) => {
                 <div className="best-estate-features">
                     <div className="d-flex">
                         <div className="best-estate-feature">
-                            <i className="fas fa-check-circle"></i>
+                            {/* <i className="fas fa-check-circle"></i> */}
                             <span>Land Size: {landsize}</span>
                         </div>
                     </div>
