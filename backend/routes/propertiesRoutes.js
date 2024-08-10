@@ -4,7 +4,6 @@ const PropertiesController = require('../controllers/propertiesController');
 
 // Routes
 router.post('/', PropertiesController.createProperties);
-router.put('/:id', PropertiesController.listProperties);
 router.get('/:id', PropertiesController.getPropertiesById);
 router.get('/fundstatus/:fundstatus', PropertiesController.getPropertiesByStatus);
 router.get('/', PropertiesController.getPropertiesByListing);

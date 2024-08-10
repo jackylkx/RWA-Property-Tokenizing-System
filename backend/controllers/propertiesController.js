@@ -69,21 +69,8 @@ module.exports = {
         }
     },
 
-    async updateProperties(req, res) {
-        try {
-            res.status(404).json({ message: req.params.id });
-            const properties = await Properties.findOneAndUpdate({propertyid : req.params.id}, req.body, { new: true });
-            if (!properties) {
-                return res.status(404).json({ message: 'Property not found' });
-            }
-            
-            res.status(200).json(properties);
-        } catch (error) {
-            res.status(404).json({ Error: error.message });
-        }
-    },
 
-    async listProperties(req, res) {
+    async updateProperties(req, res) {
         try {
     
             const properties = await Properties.findOneAndUpdate({propertyid : req.params.id}, req.body, { new: true });

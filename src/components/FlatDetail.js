@@ -9,13 +9,14 @@ import propertyContractABI from "../contracts/property.json";
 import { Link, useLocation } from 'react-router-dom';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
-import { getAllPropertyById, getAllPropertyByListing, addProperty } from '../api/property_api';
+import { getAllPropertyById, updateProperty } from '../api/property_api';
 
 const FlatDetail = (props) => {
     let stateData = props.location.state
     //var account = localStorage.getItem('account')
     var propertyId = stateData['propertyId'];
     var sellingPrice = 0;
+    var PRECISION = 1000000000000000000;
 
 
     const escrowContractAddress = process.env.REACT_APP_ESCROW_CONTRACT_ADDRESS;
@@ -123,11 +124,7 @@ const FlatDetail = (props) => {
         
     }, [escrowContractInstance]);
 
-    useEffect(() => {
-        // Logic to reload or perform any actions when account changes
-        console.log('Account changed or component reloaded:', accounts);
-        // You can put any logic here that needs to run when account changes
-      }, [accounts]);
+
 
     const fnConnectWallet = async () => {
         if (window.ethereum) {
@@ -180,7 +177,7 @@ const FlatDetail = (props) => {
                             <p className="mb-0"><b>Property Price</b></p>
                         </div>
                         <div className="col-6">
-                            <p className="mb-0">{Number(properties.purchasePrice) / 1000000000000000000} ETH</p>
+                            <p className="mb-0">{Number(properties.purchasePrice) / PRECISION} ETH</p>
                         </div>
                     </div>
                     <div className="row">
@@ -188,15 +185,15 @@ const FlatDetail = (props) => {
                             <p className="mb-0"><b>Deposit</b></p>
                         </div>
                         <div className="col-6">
-                            <p className="mb-0">{Number(properties.deposit) / 1000000000000000000} ETH</p>
+                            <p className="mb-0">{Number(properties.deposit) / PRECISION} ETH</p>
                         </div>
                     </div>
                     <br></br>
-                    <p className="m-0"><i className="fa fa-exclamation-triangle" style={{ color: 'red' }}></i> To reserve the property, contract will hold <b>{Number(properties.deposit) / 1000000000000000000}</b> ETH from your wallet</p>
+                    <p className="m-0"><i className="fa fa-exclamation-triangle" style={{ color: 'red' }}></i> To reserve the property, contract will hold <b>{Number(properties.deposit) / PRECISION}</b> ETH from your wallet</p>
                     <p className="m-0">Once deposit paid, our agent will liaise with you on the follow-up legal procedure.</p>
                     <br></br>
                     <button className="btn btn-subscribe" onClick={() => initialPurchase(properties.propertyid)}>
-                        <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Pay Deposit
+                        <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Pay {Number(properties.deposit) / PRECISION} ETH
                     </button>
                 </div>
             );
@@ -207,7 +204,7 @@ const FlatDetail = (props) => {
             return (
                 <div>
                     <div className="row">
-                        <div className="col-6">
+                        <div className="col-4">
                             <p className="mb-0"><b>Property Name</b></p>
                         </div>
                         <div className="col-6">
@@ -215,15 +212,15 @@ const FlatDetail = (props) => {
                         </div>
                     </div>                 
                     <div className="row">
-                        <div className="col-6">
+                        <div className="col-4">
                             <p className="mb-0"><b>Property Price</b></p>
                         </div>
                         <div className="col-6">
-                            <p className="mb-0">{Number(properties.purchasePrice) / 1000000000000000000} ETH</p>
+                            <p className="mb-0">{Number(properties.purchasePrice) / PRECISION} ETH</p>
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-6">
+                        <div className="col-4   ">
                             <p className="mb-0"><b>Buyer</b></p>
                         </div>
                         <div className="col-6">
@@ -257,23 +254,24 @@ const FlatDetail = (props) => {
                             <p className="mb-0"><b>Property Price</b></p>
                         </div>
                         <div className="col-6">
-                            <p className="mb-0">{Number(properties.purchasePrice) / 1000000000000000000} ETH</p>
+                            <p className="mb-0">{Number(properties.purchasePrice) / PRECISION} ETH</p>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-6">
-                            <p className="mb-0"><b>Remaining Amount</b></p>
+                            <p className="mb-0"><b>Outstanding Amount</b></p>
                         </div>
                         <div className="col-6">
-                            <p className="mb-0">{(Number(properties.purchasePrice) - Number(properties.deposit)) / 1000000000000000000} ETH</p>
+                            <p className="mb-0">{(Number(properties.purchasePrice) - Number(properties.deposit)) / PRECISION} ETH</p>
                         </div>
                     </div>
                     <br></br>
-                    <p className="m-0"><i className="fa fa-exclamation-triangle" style={{ color: 'red' }}></i> You agree property to be sold to <b>{properties.buyer}</b></p>
-                    <p className="m-0">Once you approved, buyer will proceed to make remaining payment.</p>
+                    <p className="m-0"><i className="fa fa-exclamation-triangle" style={{ color: 'red' }}></i> You are agree to pay outstanding amount ({(Number(properties.purchasePrice) - Number(properties.deposit)) / PRECISION} ETH) to <b>{properties.seller}</b></p>
+                    <br></br>
+                    <p className="m-0"><i className="fa fa-info" style={{ color: 'blue', marginRight: "5px" }}></i>Once you approved, government officer will consent and transfer the property ownership to you in 1 working days.</p>
                     <br></br>
                     <button className="btn btn-subscribe" onClick={() => completePurchase(properties.propertyid)}>
-                        <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Make Full Payment
+                        <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Payment {(Number(properties.purchasePrice) - Number(properties.deposit)) / PRECISION} ETH
                     </button>
                 </div>
             );
@@ -315,10 +313,26 @@ const FlatDetail = (props) => {
                 value: amountInWei.toString(),
                 gas: gasEstimate
             });
-            checkEscrow(propertyId);
+
+            if (tx != null) {
+                const data = {
+                    buyer: accounts,
+                    fundStatus: 1,
+                  };
+
+                const returndata = await updateProperty(propertyId, data);
+                if (returndata != null && returndata.propertyid == propertyId) {
+                    setVisible(true);
+                    setButtonAction("Success Initial Purchase");
+                    renderDialogContent();
+                    setProperties(returndata);
+                }
+            }
+
+/*             checkEscrow(propertyId);
             setVisible(true);
             setButtonAction("Success Initial Purchase");
-            renderDialogContent();
+            renderDialogContent(); */
             console.log('Transaction sent:', tx);
         } catch (error) {
             console.error('Error initiating purchase:', error.data != undefined ? (error.data != undefined ? error.data.message : error.message) : error.message);
@@ -331,69 +345,7 @@ const FlatDetail = (props) => {
 
     };
 
-    const createEscrow = async (id, price) => {
-        fnConnectWallet();
-        const tempWeb3 = new Web3(window.ethereum);
-
-        propertyContractInstance = new tempWeb3.eth.Contract(
-            propertyContractABI,
-            propertyContractAddress,
-        );
-
-        escrowContractInstance = new tempWeb3.eth.Contract(
-            escrowContractABI,
-            escrowContractAddress,
-        );
-
-        // Call the function received from the parent component
-        const propertyId = 1;
-        const amountInEther = "2.0"; // For example, 0.1 ether
-        const amountInWei = ethers.parseEther(amountInEther);
-        try {
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            console.log('accounts:', accounts[0]);
-
-            const networkId = await tempWeb3.eth.net.getId();
-            console.log('Network ID:', networkId);
-
-            const balance = await tempWeb3.eth.getBalance(accounts[0]);
-            console.log('Account balance:', tempWeb3.utils.fromWei(balance, 'ether'), 'ETH');
-
-            const owner = await escrowContractInstance.methods.contractOwner().call();
-            console.log('owner:', owner);
-
-            const gasEstimateProperty = await propertyContractInstance.methods.approve(escrowContractInstance._address, propertyId).estimateGas({
-                from: accounts[0],
-
-            });
-
-            const txProperty = await propertyContractInstance.methods.approve(escrowContractInstance._address, propertyId).send({
-                from: accounts[0],
-            });
-
-
-
-            const gasEstimate = await escrowContractInstance.methods.createEscrow(propertyId, 2).estimateGas({
-                from: accounts[0],
-                value: amountInWei.toString()
-
-            });
-
-            const tx = await escrowContractInstance.methods.createEscrow(propertyId, 2).send({
-                from: accounts[0],
-                gas: gasEstimate
-            });
-            console.log('Transaction sent:', tx);
-        } catch (error) {
-            console.error('Error create Escrow', error.data != undefined ? (error.data != undefined ? error.data.message : error.message) : error.message);
-            if (error.message.includes('gas')) {
-                alert('Failed to estimate gas. There might be an error in the contract, and this transaction may fail.');
-            } else {
-                alert('An error occurred: ' + (error.data != undefined ? (error.data != undefined ? error.data.message : error.message) : error.message));
-            }
-        }
-
-    };
+   
 
     const approvePurchase = async (propertyId) => {
         propertyId = Number(propertyId);
@@ -408,11 +360,27 @@ const FlatDetail = (props) => {
                 from: accounts,
                 gas: gasEstimate
             });
-            checkEscrow(propertyId);
+
+            if (tx != null) {
+                const data = {
+                    approval: true,
+                    fundStatus:2
+                  };
+
+                const returndata = await updateProperty(propertyId, data);
+                if (returndata != null && returndata.propertyid == propertyId) {
+                    setVisible(true);
+                    setButtonAction("Success Approve Purchase");
+                    renderDialogContent();
+                    setProperties(returndata);
+                }
+            }
+
+/*             checkEscrow(propertyId);
 
             setVisible(true);
             setButtonAction("Success Approve Purchase");
-            renderDialogContent();
+            renderDialogContent(); */
 
             console.log('Transaction sent:', tx);
         } catch (error) {
@@ -445,7 +413,21 @@ const FlatDetail = (props) => {
                 value: amountInWei.toString(),
                 gas: gasEstimate
             });
-            checkEscrow(propertyId);
+
+            if (tx != null) {
+                const data = {
+                    fundStatus:3
+                  };
+
+                const returndata = await updateProperty(propertyId, data);
+                if (returndata != null && returndata.propertyid == propertyId) {
+                    setVisible(true);
+                    setButtonAction("Success Approve Purchase");
+                    renderDialogContent();
+                    setProperties(returndata);
+                }
+            }
+
             console.log('Transaction sent:', tx);
         } catch (error) {
             console.error('Error create Escrow', (error.data != undefined ? error.data.message : error.message));
@@ -560,12 +542,6 @@ const FlatDetail = (props) => {
 
     };
 
-    const handleAccountChange = async () => {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        setAccounts(accounts[0]);
-        console.log("Current account:", accounts[0]);
-        //checkEscrow(propertyId);
-    };
 
     return (
         <div>
@@ -604,7 +580,7 @@ const FlatDetail = (props) => {
                                             {properties.propertyDesc}</p>
                                     </div>
                                     <div>
-                                        <span className="fd-price"><i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> {Number(properties.purchasePrice) / 1000000000000000000}</span>
+                                        <span className="fd-price"><i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> {Number(properties.purchasePrice) / PRECISION}</span>
                                     </div>
                                 </div>
                                 <ImageGallery flickThreshold={0.50} slideDuration={0} items={images} showNav={false} showFullscreenButton={false} showPlayButton={false} />

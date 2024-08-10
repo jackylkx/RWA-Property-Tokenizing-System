@@ -60,6 +60,19 @@ export const listProperty = async (propertyId,_purchasePrice,_deposit) => {
   }
 };
 
+
+export const updateProperty = async (propertyId,data) => {
+  try {
+
+    console.log(data);
+    const response = await axios.put(`${API_URL}/${propertyId}`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating item', error);
+    throw error;
+  }
+};
+
 export const addProperty = async (item) => {
   try {
     const response = await axios.post(`${API_URL}`, item);
