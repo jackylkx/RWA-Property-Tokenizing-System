@@ -27,14 +27,14 @@ const FlatItem = ({slug, properties, account}) => {
                         </div>
                         <Link to={{
                                 pathname: `/flat/${slug}`,
-                                state: { properties: properties, account: account}
+                                state: { propertyId: properties.propertyid, account: account}
                             }} 
                             className="item-title" >
                             <button className="btn btn-detail">View</button>
                         </Link>
                     </div>
                 </div>
-            </div>):(<div>Loading properties...</div>)}
+            </div>):(<div></div>)}
         </div>
     )
 }

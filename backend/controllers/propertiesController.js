@@ -46,7 +46,7 @@ module.exports = {
     async getPropertiesBySeller(req, res) {
         try {
    
-            const properties = await Properties.find({ seller: req.params.seller });
+            const properties = await Properties.find({ seller: { $regex: `^${req.params.seller}$`, $options: 'i' }  });
             if (properties.length === 0) {
                 return res.status(404).json({ message: 'No listed properties found' });
             }

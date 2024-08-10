@@ -48,10 +48,10 @@ const FlatDetail = (props) => {
                 console.error('Error:', err);
             }
         };
-        console.log("accounts: ", accounts);
-        
+
+        console.log("propertyId: "+propertyId); 
         if (properties == null && escrow == null) {
-            fetchProperties(1);
+            fetchProperties(propertyId);
         }
         const tempWeb3 = new Web3(window.ethereum);
         if (!escrowContractInstance ) {           
@@ -71,7 +71,6 @@ const FlatDetail = (props) => {
 
         window.ethereum.on('accountsChanged', async () => {
       
-            window.ethereum.on('accountsChanged', handleAccountChange);
             const account = await window.ethereum.request({ method: 'eth_requestAccounts' });
             setAccounts(account[0]);
             console.log('Accounts:', account[0]);

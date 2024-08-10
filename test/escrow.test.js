@@ -19,6 +19,7 @@ describe("Escrow", function () {
 
         [contractOwner, owner, buyer] = await ethers.getSigners();
         escrow = await Escrow.connect(contractOwner).deploy(propertyNFTaddress); 
+        console.log("Contract Owner Address: " + contractOwner.address);
 
     });
 

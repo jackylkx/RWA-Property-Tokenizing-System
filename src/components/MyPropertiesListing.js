@@ -11,10 +11,19 @@ const escrowContractAddress = process.env.REACT_APP_ESCROW_CONTRACT_ADDRESS;
 const MyProperties = (account) => {
   const [properties, setProperties] = useState([]);
   const [escrow, setEscrow] = useState([]);
+  const [accounts, setAccounts] = useState([]);
   var escrowContractInstance = "";
     var propertyContractInstance = "";
     
-
+    useEffect(() => {
+      setAccounts(account.account);
+      window.ethereum.on('accountsChanged', async () => {
+    
+          const account = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          setAccounts(account[0]);
+          console.log('Accounts:', account[0]);
+      })
+  }, []);
  /*  useEffect(() => {
 
     const tempWeb3 = new Web3(window.ethereum);
@@ -57,8 +66,8 @@ const MyProperties = (account) => {
     
                     const fetchProperties = async () => {
                         try {
-                          console.log(account.account);
-                            const data = await getPropertiesBySeller(account.account);
+                          console.log(accounts);
+                            const data = await getPropertiesBySeller(accounts);
                             console.log(data);
                             setProperties(data);
                         } catch (err) {
@@ -66,13 +75,23 @@ const MyProperties = (account) => {
                             console.error('Error:', err);
                         }
                     };
-           if(properties.length == 0 && account != null){
+                    console.log("properties: " + properties);
+                    if(properties.length > 0)
+                    {
+                      console.log("properties[0].seller: " + properties[0].seller);
+                    }
+                    
+                    console.log("accounts: " + accounts);
+           if(properties.length == 0 && accounts != null){
     
     
             fetchProperties();
            }
+           else if(properties[0].seller.toLowerCase() != accounts.toLowerCase()){
+            fetchProperties();
+           }
                     
-          }, [properties,account]);
+          }, [properties,accounts]);
 
 
 
@@ -100,12 +119,12 @@ const MyProperties = (account) => {
                    <div>
                    {properties.map((property, index) => (
                      <div className="row" key={property.propertyid}>
-                       <MyPropertiesItem slug={`property-${property.propertyid}`} properties={property} account={account.account}/>
+                       <MyPropertiesItem slug={`property-${property.propertyid}`} selectedproperty={property} account={account.account}/>
                      </div>
                    ))}
                  </div>
                 
-                  ):(<div>Loading properties...</div>)}
+                  ):(<div>No properties under your account</div>)}
             </div>
         </section>
 </div>

@@ -33,13 +33,17 @@ async function main() {
     "QmUDnCwoaL3PyUDJm7JQVFkitY4q3HN13ecMzkz4J5KQgn",
      );
 
-    await propertyNFT.connect(owner1).approve(escrow.getAddress(), 1);
+/*     await propertyNFT.connect(owner1).approve(escrow.getAddress(), 1);
     await propertyNFT.connect(owner2).approve(escrow.getAddress(), 2);
-    await propertyNFT.connect(owner3).approve(escrow.getAddress(), 3);
+    await propertyNFT.connect(owner3).approve(escrow.getAddress(), 3); */
 
-    await escrow.connect(owner1).createEscrow(1,2);
+/*     await escrow.connect(owner1).createEscrow(1,2);
     await escrow.connect(owner2).createEscrow(2,3);
-    await escrow.connect(owner3).createEscrow(3,5);
+    await escrow.connect(owner3).createEscrow(3,5); */
+
+    console.log("owner1:", owner1.getAddress());
+    console.log("owner2:", owner2.getAddress());
+    console.log("owner3:", owner3.getAddress());
 
 }
 
