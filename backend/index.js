@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 5000;
 //mongodb+srv://sa:*****@cluster0.rj3fd.mongodb.net/Property?retryWrites=true&w=majority&appName=Cluster0
 //mongodb://127.0.0.1:27017/Property
 // Connect to MongoDB
+console.log('REACT_APP_MONGO_URI' + process.env.REACT_APP_MONGO_URI);
 
 mongoose.connect(process.env.REACT_APP_MONGO_URI, {
     useNewUrlParser: true,
