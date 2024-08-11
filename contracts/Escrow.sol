@@ -42,6 +42,8 @@ contract Escrow {
     uint256 constant DECIMALS = 18; // Number of decimal places for Ethereum
 uint256 constant PRECISION = 10**DECIMALS;
 
+event TransferInitiated(address indexed from, address indexed to, uint256 indexed propertyId);
+
     constructor(address _propertyContract) {
         contractOwner = msg.sender;
         propertyContract = IProperty(_propertyContract);
@@ -130,13 +132,18 @@ uint256 constant PRECISION = 10**DECIMALS;
             releaseFund,
             escrow.purchasePrice
         ); 
+
+        propertyContract.transferFrom(address(this),escrow.buyer, _propertyid);
+
+        emit TransferInitiated(address(this), escrow.buyer, _propertyid);
+        
         address payable payableseller = payable(escrow.seller);
         payableseller.transfer(releaseFund);
         escrow.isListed = false;
         escrow.approval == false;
         escrow.fundStatus = 4; //fund release
 
-        propertyContract.transferFrom(address(this),escrow.buyer, _propertyid);
+        
 
     }
 

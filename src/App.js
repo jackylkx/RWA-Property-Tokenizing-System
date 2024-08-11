@@ -31,7 +31,7 @@ const escrowContractAddress = process.env.REACT_APP_ESCROW_CONTRACT_ADDRESS;
 function App() {
 
 
-  const [account, setAccount] = useState(localStorage.getItem('account'));
+  const [account, setAccount] = useState(null);
   const [profileExists, setProfileExists] = useState(null);
   const [web3, setWeb3] = useState(null);
   const [escrowContract, setEscrowContract] = useState(null);
@@ -58,6 +58,7 @@ function App() {
     
     
     }, [])
+
 
     async function loadPropertyContract(){
 

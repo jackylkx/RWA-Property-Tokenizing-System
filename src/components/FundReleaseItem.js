@@ -71,7 +71,7 @@ const FundReleaseItem = ({ slug, property,setProperties }) => {
 
 
         try {
-/*             var account = await window.ethereum.request({ method: 'eth_requestAccounts' });
+             var account = await window.ethereum.request({ method: 'eth_requestAccounts' });
             account = account[0];
 
             const gasEstimate = await escrowContractInstance.methods.releaseFunding(propertyId).estimateGas({
@@ -82,9 +82,9 @@ const FundReleaseItem = ({ slug, property,setProperties }) => {
                 from: account,
                 gas: gasEstimate
             });
-            console.log('Transaction sent:', tx); */
+            console.log('Transaction sent:', tx); 
 
-            //if (tx != null) {
+            if (tx != null) {
                 const data = {
                     isListed: false,
                     fundStatus: 4,
@@ -103,7 +103,7 @@ const FundReleaseItem = ({ slug, property,setProperties }) => {
 
                     
                 }
-           // }
+            }
         } catch (error) {
             console.error('Error create properties', (error.data != undefined ? error.data.message : error.message));
             if (error.message.includes('gas')) {

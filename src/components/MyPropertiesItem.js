@@ -68,6 +68,9 @@ const MyPropertiesItem = ({ slug, selectedproperty, account }) => {
                     const balance = await tempWeb3.eth.getBalance(account);
                     console.log('account balance:', tempWeb3.utils.fromWei(balance, 'ether'), 'ETH');
 
+                    const ownerOf = await propertyContractInstance.methods.ownerOf(propertyId).call();
+                    console.log('ownerOf Property:', ownerOf);
+
                     const owner = await escrowContractInstance.methods.contractOwner().call();
                     console.log('owner:', owner);
 

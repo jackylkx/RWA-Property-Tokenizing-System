@@ -61,6 +61,7 @@ export const listProperty = async (propertyId,_purchasePrice,_deposit) => {
       isListed: true,
       purchasePrice: _purchasePrice,
       deposit: _deposit,
+      fundStatus:0,
     };
 
     console.log(data);

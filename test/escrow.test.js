@@ -13,12 +13,14 @@ describe("Escrow", function () {
         PropertyNFT = await ethers.getContractFactory("PropertyNFT");
         propertyNFT = await PropertyNFT.deploy();
         propertyNFTaddress = await propertyNFT.getAddress();
-        
+        console.log("Property Contract address:" + propertyNFTaddress);
 
         Escrow = await ethers.getContractFactory("Escrow");
 
         [contractOwner, owner, buyer] = await ethers.getSigners();
         escrow = await Escrow.connect(contractOwner).deploy(propertyNFTaddress); 
+        escrowaddress = await escrow.getAddress();
+        console.log("Escrow Contract address:" + escrowaddress);
         console.log("Contract Owner Address: " + contractOwner.address);
 
     });
@@ -91,6 +93,10 @@ describe("Escrow", function () {
         await getBalanceInEther("owner", owner.getAddress());
         await getBalanceInEther("escrow", escrow.getAddress());
         await escrow.releaseFunding(1);
+/* 
+        await expect(escrow.releaseFunding(1))
+            .to.emit(escrow, "Release Funding")
+            .withArgs(escrowaddress, buyer.getAddress(), 1); */
 
         await getBalanceInEther("buyer", buyer.getAddress());
         await getBalanceInEther("owner", owner.getAddress());

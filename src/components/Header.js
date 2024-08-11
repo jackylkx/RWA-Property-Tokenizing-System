@@ -21,12 +21,15 @@ const Header = ({
     const escrowContractOwner = process.env.REACT_APP_ESCROW_CONTRACT_OWNER;
     useEffect(() => {
 console.log("process.env.REACT_APP_ESCROW_CONTRACT_OWNER:" + escrowContractOwner)
+
+if (window.ethereum) {
         window.ethereum.on('accountsChanged', async () => {
       
             const account = await window.ethereum.request({ method: 'eth_requestAccounts' });
             setAccounts(account[0]);
             console.log('Accounts:', account[0]);
         })
+    }
 
     }, []);
 
@@ -66,11 +69,12 @@ console.log("process.env.REACT_APP_ESCROW_CONTRACT_OWNER:" + escrowContractOwner
                                     ) :("")
                                 }
                                 {
+                                    (accounts != null) ? (
                                     accounts.toLowerCase()==escrowContractOwner.toLowerCase()  ? (
                                         <li className="nav-item">
                                             <Link className="nav-link" to="/FundReleaseList">Fund Release</Link>
                                         </li>
-                                    ) :("")
+                                    ) :("")): ("")
                                 }
                                 {/* <li className="nav-item">
                                     <Link className="nav-link" to="#">Category <i className="fas fa-chevron-down"></i></Link>

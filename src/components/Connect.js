@@ -137,6 +137,7 @@ const Connect = ({
 }, []);
   useEffect(() => {
         
+    if (window.ethereum) {
     window.ethereum.on('accountsChanged', async () => {
 
       const tempWeb3 = new Web3(window.ethereum);
@@ -146,6 +147,7 @@ const Connect = ({
           localStorage.setItem('account', accounts[0]);  
         } 
     })
+  }
 
     if(account != null){
         console.log("account updated: ", account);
@@ -178,6 +180,7 @@ const Connect = ({
       }
     } else {
       console.error("No web3 provider detected");
+      alert("Please install wallet");
     }
   }
 

@@ -17,16 +17,16 @@ const Footer = () => {
                         </div>
                     </div>
                     <div className="col-lg-3 col-md-6">
-                        <p className="footer-title">Menu</p>
+{/*                         <p className="footer-title">Menu</p>
                         <ul className="footer-ul">
                             <li>Home</li>
                             <li>Blog</li>
                             <li>About</li>
                             <li>Contact</li>
-                        </ul>
+                        </ul> */}
                     </div>
                     <div className="col-lg-3 col-md-6">
-                        <div>
+{/*                         <div>
                             <p className="footer-title">Categories</p>
                             <ul className="footer-ul">
                                 <li>Category 1</li>
@@ -34,7 +34,7 @@ const Footer = () => {
                                 <li>Category 3</li>
                                 <li>Category 4</li>
                             </ul>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="col-lg-3 col-md-6">
