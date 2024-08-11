@@ -73,6 +73,12 @@ const MyProperties = (account) => {
                         } catch (err) {
                             //setError(err);
                             console.error('Error:', err);
+                            console.error('err.response.data.message:', err.response.data.message);
+                            if(err.response.data.message == "No listed properties found")
+                            {
+                              setProperties([]);
+                            }
+                            
                         }
                     };
                     console.log("properties: " + properties);

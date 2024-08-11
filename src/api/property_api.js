@@ -43,6 +43,18 @@ export const getAllPropertyById = async (propertyId) => {
   }
 };
 
+export const getPropertiesByRefundStatus = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/by-refund-status`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching data', error);
+    throw error;
+  }
+};
+
+
+
 export const listProperty = async (propertyId,_purchasePrice,_deposit) => {
   try {
     const data = {

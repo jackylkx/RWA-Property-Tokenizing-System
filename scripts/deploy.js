@@ -12,6 +12,8 @@ async function main() {
     escrow = await Escrow.connect(contractOwner).deploy(propertyNFTaddress); 
     escrowAddress = await escrow.getAddress();
 
+    console.log("Escrow Contract Owner:", contractOwner.getAddress());
+
     console.log("Property deployed to:", propertyNFTaddress);
     console.log("Escrow deployed to:", escrowAddress);
 

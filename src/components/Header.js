@@ -17,7 +17,18 @@ const Header = ({
     fnConnectWallet
   }) => {
 
-   
+    const [accounts, setAccounts] = useState(account);
+    const escrowContractOwner = process.env.REACT_APP_ESCROW_CONTRACT_OWNER;
+    useEffect(() => {
+console.log("process.env.REACT_APP_ESCROW_CONTRACT_OWNER:" + escrowContractOwner)
+        window.ethereum.on('accountsChanged', async () => {
+      
+            const account = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            setAccounts(account[0]);
+            console.log('Accounts:', account[0]);
+        })
+
+    }, []);
 
     return (
         <div className="header">
@@ -44,9 +55,9 @@ const Header = ({
                                 {/* <li className="nav-item">
                                     <Link  className="nav-link" to="/blog">Blog</Link>
                                 </li> */}
-                                <li className="nav-item">
+{/*                                 <li className="nav-item">
                                     <Link  className="nav-link" to="/listing">List Your Property</Link>
-                                </li>
+                                </li> */}
                                 {
                                     account  ? (
                                         <li className="nav-item">
@@ -55,7 +66,7 @@ const Header = ({
                                     ) :("")
                                 }
                                 {
-                                    account  ? (
+                                    accounts.toLowerCase()==escrowContractOwner.toLowerCase()  ? (
                                         <li className="nav-item">
                                             <Link className="nav-link" to="/FundReleaseList">Fund Release</Link>
                                         </li>

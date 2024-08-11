@@ -600,7 +600,7 @@ const FlatDetail = (props) => {
                                                     
                                                     //0 = initial, 1 = deposit paid, 2 = sellerApproved, 3= full payment, 4 = fund release, 5 = listing cancelled
                                                     if (fundStatus === 0) {
-                                                        if (seller == account) {
+                                                        if (seller.toLowerCase() == account.toLowerCase()) {
                                                             return (
                                                                 <span>You have listed your property</span>
                                                             );
@@ -613,11 +613,11 @@ const FlatDetail = (props) => {
                                                         }
                                                     } else if (fundStatus === 1) { //pending approval
 
-                                                        if (buyer == account) {
+                                                        if (buyer.toLowerCase() == account.toLowerCase()) {
                                                             return (
                                                                 <span>Pending Approval From Seller</span>
                                                             );
-                                                        } else if (seller == account) {
+                                                        } else if (seller.toLowerCase() == account.toLowerCase()) {
                                                             return (
                                                                 <button className="btn btn-subscribe" onClick={() => {setVisible(true); setButtonAction("approve Purchase")}}>
                                                                     <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Approve Purchase
@@ -629,14 +629,14 @@ const FlatDetail = (props) => {
                                                             );
                                                         }
                                                     } else if (fundStatus === 2) { //2 = sellerApproved
-                                                        if (buyer == account) {
+                                                        if (buyer.toLowerCase() == account.toLowerCase()) {
                                                             return (
                                                                 <button className="btn btn-subscribe" onClick={() => {setVisible(true); setButtonAction("complete Purchase")}}>
                                                                     <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Complete Purchase
                                                                 </button>
                                                             );
 
-                                                        } else if (seller == account) {
+                                                        } else if (seller.toLowerCase() == account.toLowerCase()) {
                                                             return (
                                                                 <span>Pending full deposit from buyer</span>
                                                             );
@@ -649,14 +649,14 @@ const FlatDetail = (props) => {
                                                     } else if (fundStatus === 3) { //3= full payment
 
 
-                                                        if (buyer == account) {
+                                                        if (buyer.toLowerCase() == account.toLowerCase() ){
                                                             return (
                                                                 <button className="btn btn-subscribe" disabled={true}>
                                                                     <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Pending Release Fund by Contract Owner
                                                                 </button>
                                                             );
 
-                                                        } else if (seller == account) {
+                                                        } else if (seller.toLowerCase() == account.toLowerCase()) {
                                                             return (
                                                                 <button className="btn btn-subscribe" disabled={true}>
                                                                     <i className='fab fa-ethereum' style={{ fontSize: '24px' }}></i> Pending Release Fund by Contract Owner

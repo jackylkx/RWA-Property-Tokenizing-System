@@ -27,6 +27,12 @@ const MyPropertiesItem = ({ slug, selectedproperty, account }) => {
 
 
     const createEscrow = async (id) => {
+
+        if(sellingPrice == "" || sellingPrice == null){
+            alert(
+                "Please enter selling price"
+            );
+        }
         //fnConnectWallet();
         if (window.ethereum) {
             try {

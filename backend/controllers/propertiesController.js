@@ -25,6 +25,15 @@ module.exports = {
         }
     },
 
+    async getPropertiesByRefundStatus(req, res) {
+        try {
+            const properties = await Properties.find({ fundStatus : 3, isListed :true, approval : true });            
+            res.status(200).json(properties);
+        } catch (error) {
+            res.status(404).json({ message: 'Properties not found' });
+        }
+    },
+
     async getPropertiesByStatus(req, res) {
         try {
             const properties = await Properties.find({ fundStatus : req.params.fundstatus });            
