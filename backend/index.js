@@ -22,7 +22,8 @@ app.use(cors()); // This will allow requests from any origin
 
 // Optionally, you can configure it for specific origins
 app.use(cors({
-  origin: process.env.REACT_APP_WEB_URL // Allow only this origin
+  origin: '*', // Allow only this origin
+  methods: '*',
 }));
 
 // Middleware
