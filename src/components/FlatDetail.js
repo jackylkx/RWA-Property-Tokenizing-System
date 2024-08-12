@@ -107,7 +107,7 @@ const FlatDetail = (props) => {
         
     }, [properties]);
 
-    useEffect(() => {
+/*     useEffect(() => {
         async function getEscrowContractOwner() {
             
             const networkId = await window.ethereum.request({ method: 'net_version' });
@@ -129,7 +129,7 @@ const FlatDetail = (props) => {
             setEscrowContractOwner({}); // This worked for me
           };
         
-    }, [escrowContractInstance]);
+    }, [escrowContractInstance]); */
 
 
 
@@ -143,21 +143,7 @@ const FlatDetail = (props) => {
               //Network ID for Sepolia
               await switchToNetwork();
               }
-      
-              // user enables the app to connect to MetaMask
-      
-              const tempWeb3 = new Web3(window.ethereum);
-              
-              var accounts = await tempWeb3.eth.getAccounts();          
-      
-      
-              window.ethereum.on('accountsChanged', async () => {
-      
-                    //window.ethereum.on('accountsChanged', handleAccountChange);
-                    const account = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    setAccounts(account[0]);
-                    console.log('Accounts:', account[0]);
-                })
+
             } catch (error) {
               console.error(error);
             }
@@ -290,25 +276,15 @@ const FlatDetail = (props) => {
     };
 
     const initialPurchase = async (propertyId) => {
-        //fnConnectWallet();
+        await fnConnectWallet();
         propertyId = Number(propertyId);
         setVisible(false);
         // Call the function received from the parent component
 
         const amountInWei = Number(properties.purchasePrice) * 0.1; // For example, 0.1 ether
-        //const amountInWei = ethers.parseEther(amountInEther.toString());
-        try {
-            /*             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                        console.log('accounts:', accounts[0]);
-            
-                        const networkId = await tempWeb3.eth.net.getId();
-                        console.log('Network ID:', networkId);
-            
-                        const balance = await tempWeb3.eth.getBalance(accounts[0]);
-                        console.log('Account balance:', tempWeb3.utils.fromWei(balance, 'ether'), 'ETH');
-            
-                         */
 
+        try {
+    
             const gasEstimate = await escrowContractInstance.methods.initiatePurchase(propertyId).estimateGas({
                 from: accounts,
                 value: amountInWei.toString()
@@ -336,10 +312,6 @@ const FlatDetail = (props) => {
                 }
             }
 
-/*             checkEscrow(propertyId);
-            setVisible(true);
-            setButtonAction("Success Initial Purchase");
-            renderDialogContent(); */
             console.log('Transaction sent:', tx);
         } catch (error) {
             console.error('Error initiating purchase:', error.data != undefined ? (error.data != undefined ? error.data.message : error.message) : error.message);
@@ -355,6 +327,7 @@ const FlatDetail = (props) => {
    
 
     const approvePurchase = async (propertyId) => {
+        await fnConnectWallet();
         propertyId = Number(propertyId);
         setVisible(false);
         try {
@@ -402,6 +375,7 @@ const FlatDetail = (props) => {
     };
 
     const completePurchase = async (propertyId) => {
+        await fnConnectWallet();
         propertyId = Number(propertyId);
 
         const amountInWei = Number(properties.purchasePrice) * 0.9; // For example, 0.1 ether
@@ -554,7 +528,7 @@ const FlatDetail = (props) => {
         <div>
             {
             
-            (properties != null) && (escrowContractInstance != null) && (escrowContractOwner != null) 
+            (properties != null) && (escrowContractInstance != null)// && (escrowContractOwner != null) 
             && (images != null)  ? (
                 <div className="flat-detail">
                     <ErrorDialog
