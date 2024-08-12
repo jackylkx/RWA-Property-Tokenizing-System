@@ -5,6 +5,7 @@ import { Dialog } from 'primereact/dialog';
 import escrowContractABI from "../contracts/escrow.json";
 import propertyContractABI from "../contracts/property.json";
 import { updateProperty,getPropertiesByRefundStatus} from '../api/property_api';
+import { switchToNetwork } from './base';
 
 const FundReleaseItem = ({ slug, property,setProperties }) => {
 
@@ -73,6 +74,14 @@ const FundReleaseItem = ({ slug, property,setProperties }) => {
         try {
              var account = await window.ethereum.request({ method: 'eth_requestAccounts' });
             account = account[0];
+
+            const networkId = await window.ethereum.request({ method: 'net_version' });
+                
+                if (networkId !== process.env.REACT_APP_CHAIN_ID) {
+                    //Network ID for Sepolia
+                    await switchToNetwork();
+                    }
+
 
             const gasEstimate = await escrowContractInstance.methods.releaseFunding(propertyId).estimateGas({
                 from: account,

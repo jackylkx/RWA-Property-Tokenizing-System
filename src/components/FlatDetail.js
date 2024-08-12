@@ -10,6 +10,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { getAllPropertyById, updateProperty } from '../api/property_api';
+import { switchToNetwork } from './base';
 
 const FlatDetail = (props) => {
     let stateData = props.location.state
@@ -109,6 +110,12 @@ const FlatDetail = (props) => {
     useEffect(() => {
         async function getEscrowContractOwner() {
             
+            const networkId = await window.ethereum.request({ method: 'net_version' });
+      
+              if (networkId !== "100") {
+              //Network ID for Sepolia
+              await switchToNetwork();
+              }
             const escrowContractOwner = await escrowContractInstance.methods.contractOwner().call();
             
             setEscrowContractOwner(escrowContractOwner);
@@ -132,10 +139,10 @@ const FlatDetail = (props) => {
               await window.ethereum.request({ method: 'eth_requestAccounts' });
               const networkId = await window.ethereum.request({ method: 'net_version' });
       
-              //if (networkId !== "100") {
-              // Network ID for Sepolia
-              //await switchToSepolia();
-              //}
+              if (networkId !== "100") {
+              //Network ID for Sepolia
+              await switchToNetwork();
+              }
       
               // user enables the app to connect to MetaMask
       
@@ -283,7 +290,7 @@ const FlatDetail = (props) => {
     };
 
     const initialPurchase = async (propertyId) => {
-        fnConnectWallet();
+        //fnConnectWallet();
         propertyId = Number(propertyId);
         setVisible(false);
         // Call the function received from the parent component

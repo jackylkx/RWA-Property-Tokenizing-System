@@ -6,6 +6,7 @@ import { ethers } from 'ethers';
 import escrowContractABI from "../contracts/escrow.json";
 import propertyContractABI from "../contracts/property.json";
 import { listProperty, getAllPropertyById } from '../api/property_api';
+import { switchToNetwork } from './base';
 
 const MyPropertiesItem = ({ slug, selectedproperty, account }) => {
     const PRECISION = 1000000000000000000;
@@ -25,7 +26,6 @@ const MyPropertiesItem = ({ slug, selectedproperty, account }) => {
     }, []);
 
 
-
     const createEscrow = async (id) => {
 
         if(sellingPrice == "" || sellingPrice == null){
@@ -39,6 +39,12 @@ const MyPropertiesItem = ({ slug, selectedproperty, account }) => {
                 const accounts = await window.ethereum.request({
                     method: 'eth_requestAccounts',
                 });
+                const networkId = await window.ethereum.request({ method: 'net_version' });
+
+                if (networkId !== process.env.REACT_APP_CHAIN_ID) {
+                    //Network ID for Sepolia
+                    await switchToNetwork();
+                    }
                 account = accounts[0];
                 const tempWeb3 = new Web3(window.ethereum);
 
