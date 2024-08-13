@@ -73,8 +73,8 @@ event TransferInitiated(address indexed from, address indexed to, uint256 indexe
             buyer : address(0),
             approval : false,
             isListed : true,
-            purchasePrice : _purchasePrice * PRECISION,
-            deposit: _purchasePrice *10 * PRECISION /100,
+            purchasePrice : _purchasePrice,
+            deposit: _purchasePrice *10 /100,
             fundStatus : 0
         });
         propertyEscrow[_propertyid] = escrow;

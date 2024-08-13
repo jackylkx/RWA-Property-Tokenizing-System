@@ -61,9 +61,9 @@ const MyPropertiesItem = ({ slug, selectedproperty, account }) => {
                 // Call the function received from the parent component
                 const propertyId = id;
                 console.log('propertyId:', propertyId);
-                const amountInEther = parseFloat(sellingPrice) * PRECISION; // For example, 0.1 ether
-                console.log('amountInEther:', amountInEther);
-                const amountInWei = ethers.parseEther(amountInEther.toString());
+                const sellingPriceInWei = parseFloat(sellingPrice) * PRECISION; // For example, 0.1 ether
+                //console.log('amountInEther:', amountInEther);
+                //const sellingPriceInWei = ethers.parseEther(amountInEther.toString());
                 try {
 
                     console.log('account:', account);
@@ -94,20 +94,20 @@ const MyPropertiesItem = ({ slug, selectedproperty, account }) => {
 
 
 
-                    const gasEstimate = await escrowContractInstance.methods.createEscrow(propertyId, sellingPrice).estimateGas({
+                    const gasEstimate = await escrowContractInstance.methods.createEscrow(propertyId, sellingPriceInWei).estimateGas({
                         from: account,
-                        value: amountInWei.toString()
+                        value: sellingPriceInWei.toString()
 
                     });
                     console.log('gasEstimate:', gasEstimate);
-                    const tx = await escrowContractInstance.methods.createEscrow(propertyId, sellingPrice).send({
+                    const tx = await escrowContractInstance.methods.createEscrow(propertyId, sellingPriceInWei).send({
                         from: account,
                         gas: gasEstimate
                     });
                     console.log('Transaction sent:', tx);
 
                     if (tx != null) {
-                        const data = await listProperty(propertyId, sellingPrice * PRECISION, sellingPrice * 10 / 100 * PRECISION);
+                        const data = await listProperty(propertyId, sellingPriceInWei, sellingPriceInWei * 10 / 100);
                         if (data != null && data.propertyid == propertyId) {
                             setVisible(true);
                             setButtonAction("create escrow success");

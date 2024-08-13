@@ -16,5 +16,10 @@ module.exports = {
       accounts: [process.env.REACT_APP_ACCOUNT_PRIVATE_KEY],
       chainId: 11155420
     },
+    kiichain_testnet: {
+      url: `https://a.sentry.testnet.kiivalidator.com:8645`,
+      accounts: [process.env.REACT_APP_ACCOUNT_PRIVATE_KEY],
+      chainId: 123454321
+    },
   },
 };

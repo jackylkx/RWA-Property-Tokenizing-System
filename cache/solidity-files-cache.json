@@ -717,8 +717,8 @@
       ]
     },
     "C:\\Users\\user\\Documents\\Project\\Project 2\\contracts\\Escrow.sol": {
-      "lastModificationDate": 1723352816867,
-      "contentHash": "f1c4986f5ca1d95373cff2633b627115",
+      "lastModificationDate": 1723470314446,
+      "contentHash": "0236ac09bd09a43c18eebd2a20b03dcf",
       "sourceName": "contracts/Escrow.sol",
       "solcConfig": {
         "version": "0.8.24",
