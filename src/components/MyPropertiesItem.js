@@ -188,7 +188,7 @@ const MyPropertiesItem = ({ slug, selectedproperty, account }) => {
 
                     </Dialog>
                     <div className="prop-item-image">
-                        <img className="img-fluid" src={"https://ipfs.io/ipfs/" + property.imageUrls[0]} alt="flat" />
+                        <img className="img-fluid" src={"https://gateway.pinata.cloud/ipfs/" + property.imageUrls[0]} alt="flat" />
                     </div>
                     <div className="prop-item-description">
                         <div className="d-flex justify-content-between mb-3">

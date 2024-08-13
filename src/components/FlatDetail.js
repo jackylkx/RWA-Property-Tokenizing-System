@@ -91,16 +91,16 @@ const FlatDetail = (props) => {
         if(properties != null){
             setImages([
                 {
-                    original: "https://ipfs.io/ipfs/" + properties.imageUrls[0],
-                    thumbnail: "https://ipfs.io/ipfs/" + properties.imageUrls[0],
+                    original: "https://gateway.pinata.cloud/ipfs/" + properties.imageUrls[0],
+                    thumbnail: "https://gateway.pinata.cloud/ipfs/" + properties.imageUrls[0],
                 },
                 {
-                    original: "https://ipfs.io/ipfs/" + properties.imageUrls[1],
-                    thumbnail: "https://ipfs.io/ipfs/" + properties.imageUrls[1],
+                    original: "https://gateway.pinata.cloud/ipfs/" + properties.imageUrls[1],
+                    thumbnail: "https://gateway.pinata.cloud/ipfs/" + properties.imageUrls[1],
                 },
                 {
-                    original: "https://ipfs.io/ipfs/" + properties.imageUrls[2],
-                    thumbnail: "https://ipfs.io/ipfs/" + properties.imageUrls[2],
+                    original: "https://gateway.pinata.cloud/ipfs/" + properties.imageUrls[2],
+                    thumbnail: "https://gateway.pinata.cloud/ipfs/" + properties.imageUrls[2],
                 },
             ]);
         }
