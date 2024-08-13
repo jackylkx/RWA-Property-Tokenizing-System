@@ -8,7 +8,7 @@ const FlatItem = ({slug, properties, account}) => {
             { properties !== undefined && properties != null?  (
             <div className="item">
                 <div className="item-image">
-                    <img className="img-fluid" src={"https://ipfs.io/ipfs/"+ properties.imageUrls[0]} alt="flat" />
+                    <img className="img-fluid" src={"https://gateway.pinata.cloud/ipfs/"+ properties.imageUrls[0]} alt="flat" />
                 </div>
                 <div className="item-description">
                     <div className="d-flex justify-content-between mb-3">
